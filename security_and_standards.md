@@ -1,3 +1,8 @@
+---
+description: Universal security (OWASP Top 10, 12-Factor zero hardcoded secrets/URLs), data privacy, resource safety, and OS-agnostic cross-platform standards.
+trigger: always_on
+---
+
 # Rule: Universal Security & Engineering Standards
 
 ## Purpose

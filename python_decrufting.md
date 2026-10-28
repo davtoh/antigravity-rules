@@ -1,3 +1,8 @@
+---
+description: Enforce modern Python 3 (3.10-3.12+) standards, prevent obsolete Python 2/3 shims, and preserve domain math/comments.
+trigger: always_on
+---
+
 # Rule: Python 2 Decrufting
 
 ## Purpose

@@ -1,3 +1,8 @@
+---
+description: Require runnable CLI/service examples, pre-run diagnostic one-liners, and Scenario Combinations Matrices in project documentation.
+trigger: always_on
+---
+
 # Rule: Executable Documentation & Scenario Matrices
 
 ## Purpose
