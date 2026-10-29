@@ -60,3 +60,6 @@ trigger: always_on
 - **Target Language Idioms:**
   - When modernizing in Python: PEP 8, type hints where helpful, standard library zones (`zoneinfo`).
   - When migrating to other languages (Node/Go/Rust/C#): follow official idioms, project scaffolding, and dependency management standards.
+- **Frontend, CSS Specificity & Layout Discipline:**
+  - Never use `!important` in production stylesheets. Rely on standard selector hierarchy, pseudo-classes (`:fullscreen`, `:hover`), and scoped custom properties rather than brute-forcing specificity.
+  - Enforce defensive layout containment on flex/grid labels: require `min-width: 0`, `overflow: hidden`, and `text-overflow: ellipsis` alongside native `title` hover attributes to prevent unbounded string overflow.

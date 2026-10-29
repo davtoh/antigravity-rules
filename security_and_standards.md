@@ -77,3 +77,12 @@ Enforce industry-standard security (OWASP Top 10, 12-Factor App methodology), da
   - Phase out obsolete compatibility shims (e.g. Python 2/3 shims like `six`, `future`, `from __future__ import division`) in favor of native constructs and type annotations.
 - **Modularity & Single Responsibility:**
   - Keep controllers, models, services, views, and helpers modular, cleanly decoupled, and focused on single responsibilities.
+
+---
+
+## 7. Frontend, CSS Specificity & Layout Discipline
+- **Strict Avoidance of `!important`:**
+  - Never use `!important` in production stylesheets. It breaks natural CSS cascade inheritance, makes styles un-overridable by responsive or thematic child components, breaks fullscreen pseudo-classes (`:fullscreen`), and creates compounding specificity debt.
+  - Rely on structured CSS specificity: leverage pseudo-classes (`:fullscreen`, `:hover`, `:focus-visible`), parent-scoped selectors, or CSS custom properties (variables) rather than brute-forcing styles.
+- **Defensive Layout & Overflow Containment:**
+  - Prevent text-overflow blowouts by ensuring all flex and grid children containing dynamic or user-supplied strings include `min-width: 0`, `overflow: hidden`, and `text-overflow: ellipsis`, pairing them with native `title` attributes for full hover reveal.
