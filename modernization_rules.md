@@ -34,13 +34,14 @@ trigger: always_on
   - **Rule Precedence Over Chat Formatting:** While generic chat assistant guidelines suggest `file:///` for clickable links, this rule strictly takes precedence: **NEVER embed `file:///` URIs, Windows drive letters (`C:\`), or OS user paths (`/home/...`, `Users/...`) inside committable files, implementation plans, or documentation**.
   - **Path Conventions:** Always use repository-relative forward-slash POSIX paths (`src/module/file.py#L10-L20` or `[file.py](src/module/file.py)` or `src/module/file.py:10-20`).
   - **OS-Agnostic Verification Commands:** Commands must run cleanly across platforms (`python -m unittest discover tests`, `pytest tests/ -v`). Never reference OS-locked virtualenv binaries (`.venv\Scripts\...`), OS-specific environment setters (`$env:...`), or paths inside personal customization directories (`~/.gemini/...`). If a helper script is needed, reference it from `<workspace>/scripts/`.
-  - **Infrastructure Parameterization:** Use environment placeholders (`$APP_URL` or relative paths like `/stream/cam_01`) rather than hardcoding literal infrastructure details (`http://localhost:8000`).
+  - **Infrastructure Parameterization:** Use environment placeholders (`$APP_URL` or relative paths like `/api/v1/health`) rather than hardcoding literal infrastructure details.
 - **Pre-Commit Staging Audit & Sanitization Gate:**
   - Before presenting a suggested `git commit` command for plans, documentation, or code changes, perform an active audit of staged files to verify:
     1. Zero `file:///` URLs or local machine absolute paths.
     2. Zero OS-specific virtual environment binary paths.
     3. Zero hardcoded local infrastructure URLs/ports.
     4. Inclusion of runnable verification commands or a Scenario Combinations Matrix.
+    5. Adherence to Modularity Budgets (new or modified files respect the 350-line soft / 500-line hard ceiling, classes stay $\le$ 10–12 methods, and functions stay $\le$ 40 lines; no new features appended directly into existing God files).
 - **Automated Validation:** Execute automated checks (system diagnostics, unit tests, route checks, linters) before closing each milestone.
 - **Manual Verification Instructions:** Provide explicit, copy-pasteable manual testing steps so the developer can verify in the browser or terminal.
 - **Developer Review & Commit Gate:** Provide a concise summary and commit message suggestion. Let the user test and commit milestone by milestone.

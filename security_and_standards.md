@@ -1,12 +1,12 @@
 ---
-description: Universal security (OWASP Top 10, 12-Factor zero hardcoded secrets/URLs), data privacy, resource safety, and OS-agnostic cross-platform standards.
+description: Universal security (OWASP Top 10, 12-Factor zero hardcoded secrets/URLs), 10 core coding principles, modularity budgets, data privacy, resource safety, and OS-agnostic cross-platform standards.
 trigger: always_on
 ---
 
 # Rule: Universal Security & Engineering Standards
 
 ## Purpose
-Enforce industry-standard security (OWASP Top 10, 12-Factor App methodology), data privacy, resource safety, cross-platform robustness, and clean engineering conventions across all projects, modernizations, web services, mobile applications, and edge/IoT systems.
+Enforce industry-standard security (OWASP Top 10, 12-Factor App methodology), the 10 Core Coding Principles, quantitative modularity budgets, data privacy, resource safety, and cross-platform robustness across all projects, languages, and architectures.
 
 ---
 
@@ -69,14 +69,31 @@ Enforce industry-standard security (OWASP Top 10, 12-Factor App methodology), da
 
 ---
 
-## 6. Code Quality & Engineering Discipline
-- **Structured Logging:**
-  - Use standard language logging frameworks (`logging` in Python, standard loggers in Dart/TS) with appropriate levels (`DEBUG`, `INFO`, `WARNING`, `ERROR`) instead of scattered raw `print()` statements in production code.
-- **Modern Language Standards & Type Safety:**
-  - Target modern runtimes (Python 3.10-3.12+, modern Dart 3+, modern TypeScript).
-  - Phase out obsolete compatibility shims (e.g. Python 2/3 shims like `six`, `future`, `from __future__ import division`) in favor of native constructs and type annotations.
-- **Modularity & Single Responsibility:**
-  - Keep controllers, models, services, views, and helpers modular, cleanly decoupled, and focused on single responsibilities.
+## 6. The 10 Core Coding Principles & Modularity Budgets
+
+### A. The 10 Core Engineering Principles
+1. **Single Responsibility Principle (SRP):** Give every module, class, and function one clear domain responsibility and a single reason to change. Decouple transport/UI routing, business logic, and data persistence into distinct layers.
+2. **DRY (Don't Repeat Yourself):** Avoid duplicating validation rules, query patterns, state transitions, or formatting logic. Extract shared behavior into reusable functions, composable classes, or shared modules.
+3. **KISS (Keep It Simple, Stupid):** Write straightforward, readable control flow. Prefer flat structures and guard clauses over deep nesting, premature abstraction, or over-engineered meta-programming.
+4. **Descriptive Naming:** Use clear, intention-revealing names for variables, predicates (`is_`, `has_`, `can_`, `should_`), functions (`verb_noun`), classes, and files so code reads as self-documenting prose without magic numbers.
+5. **Comments for the "Why":** Let expressive code explain *how*, and use comments and docstrings to explain *why*—documenting design trade-offs, business invariants, non-obvious edge cases, mathematical formulas, and legacy migration rationale.
+6. **Consistent Coding Style:** Follow official language-specific style guides and type systems (PEP 8 + type hints for Python 3.10–3.12+, Effective Dart, strict TypeScript/ESLint, rustfmt/gofmt) and use structured logging frameworks (`logging`, `logger`) instead of raw `print()` statements in production code.
+7. **Error Handling & Robustness:** Anticipate invalid or unexpected inputs, fail gracefully, use narrow exception handling rather than bare catch-alls, and never leak raw stack traces to end users.
+8. **Testing & Verification:** Pair new logic and bug fixes with automated unit and integration tests, static analysis, and type checking to catch regressions early.
+9. **Version Control Hygiene:** Keep commits atomic, focused, and paired with clear, descriptive commit messages. Never commit temporary scratch files, build artifacts, or local environment state.
+10. **Security First:** Sanitize untrusted inputs, parameterize queries, manage secrets exclusively via environment variables, keep dependencies lean and updated, and never hardcode sensitive data, URLs, or magic constants.
+
+### B. Quantitative Modularity Budgets & "Split-Before-You-Grow"
+To prevent "God Files" and "God Classes" that degrade human maintainability and AI context efficiency, enforce the following size budgets across all source files:
+
+| Code Element | Healthy Target | Soft Warning (Refactor Trigger) | Hard Ceiling (Mandatory Split) | Required Action When Approaching Limit |
+| :--- | :--- | :--- | :--- | :--- |
+| **Source File** | 150 – 300 lines | **350 lines** | **500 lines** | Split into cohesive domain submodules (`routers/`, `services/`, `repositories/`, `components/`). |
+| **Class** | 50 – 180 lines | **10 methods** (or 200 lines) | **12 methods** (or 300 lines) | Decompose using composition, focused domain services, or collaborator classes. |
+| **Function / Method** | 10 – 25 lines | **30 lines** | **40 lines** | Extract pure helper functions or strategy objects; flatten nested branches. |
+| **Route / Controller** | 5 – 15 lines | **15 lines** | **25 lines** | Keep handlers thin: parse/validate input, call a service method, and return the response. |
+
+- **The "Split-Before-You-Grow" Rule:** Never append a new feature, endpoint group, or data domain directly into an existing file that is already $\ge$ 350 lines or a class with $\ge$ 10–12 methods. Instead, create a dedicated submodule, router, service, or repository and wire it in cleanly.
 
 ---
 
