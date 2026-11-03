@@ -29,3 +29,7 @@ Ensure all Python code conforms strictly to modern Python 3 (3.10–3.15+) stand
 
 5. **Preserve Domain Comments & Algorithms:**
    - Preserve all mathematical docstrings, CV algorithms, and domain comments (e.g., OpenCV coordinate formulas, homography, filter calculations).
+
+6. **Automated Verification:**
+   - Verify modernized files using `ruff check --select UP,FA,B` or `python -m py_compile <file>`.
+

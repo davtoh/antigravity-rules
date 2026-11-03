@@ -1,0 +1,46 @@
+{
+  "baseline_ref": "HEAD~1",
+  "metrics": {
+    "executable_documentation.md": {
+      "baseline_lines": 44,
+      "candidate_lines": 31,
+      "line_delta": -13,
+      "baseline_tokens": 886,
+      "candidate_tokens": 466,
+      "token_delta": -420,
+      "savings_pct": 47.4
+    },
+    "modernization_rules.md": {
+      "baseline_lines": 67,
+      "candidate_lines": 39,
+      "line_delta": -28,
+      "baseline_tokens": 1677,
+      "candidate_tokens": 783,
+      "token_delta": -894,
+      "savings_pct": 53.3
+    },
+    "python_decrufting.md": {
+      "baseline_lines": 29,
+      "candidate_lines": 35,
+      "line_delta": 6,
+      "baseline_tokens": 548,
+      "candidate_tokens": 549,
+      "token_delta": 1,
+      "savings_pct": -0.2
+    },
+    "security_and_standards.md": {
+      "baseline_lines": 115,
+      "candidate_lines": 55,
+      "line_delta": -60,
+      "baseline_tokens": 3101,
+      "candidate_tokens": 1396,
+      "token_delta": -1705,
+      "savings_pct": 55.0
+    }
+  },
+  "total_baseline_tokens": 6212,
+  "total_candidate_tokens": 3194,
+  "total_token_delta": -3018,
+  "total_savings_pct": 48.6,
+  "test_cases_count": 4
+}

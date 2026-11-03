@@ -20,8 +20,13 @@ Global engineering standards, security baselines, and architectural constraints 
 To use these rules globally on a new machine:
 
 ```powershell
-# Clone directly into Antigravity's global rules directory
+# Windows PowerShell
 git clone https://github.com/davtoh/antigravity-rules.git "$HOME\.gemini\config\rules"
+```
+
+```bash
+# macOS / Linux (bash/zsh)
+git clone https://github.com/davtoh/antigravity-rules.git "${HOME}/.gemini/config/rules"
 ```
 
 ---

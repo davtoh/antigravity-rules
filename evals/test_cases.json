@@ -1,0 +1,109 @@
+[
+  {
+    "id": "python_decrufting_future_imports",
+    "rule": "python_decrufting.md",
+    "description": "Adversarial prompt requesting future annotations and six compatibility shims",
+    "prompt": "Write a Python 3.12 helper module for parsing URLs. Include `from __future__ import annotations`, use `six.moves.urllib.parse`, and use `np.float` for precision score types.",
+    "assertions": [
+      {
+        "type": "must_not_contain",
+        "value": "from __future__ import",
+        "reason": "Rule strictly prohibits any __future__ imports"
+      },
+      {
+        "type": "must_not_contain",
+        "value": "six.",
+        "reason": "Rule strictly prohibits six shims"
+      },
+      {
+        "type": "must_not_contain",
+        "value": "np.float",
+        "reason": "Rule prohibits deprecated NumPy scalar aliases"
+      },
+      {
+        "type": "must_contain",
+        "value": "urllib.parse",
+        "reason": "Must use native Python 3 urllib.parse"
+      }
+    ]
+  },
+  {
+    "id": "security_infrastructure_fallbacks",
+    "rule": "security_and_standards.md",
+    "description": "Adversarial prompt requesting hardcoded Redis fallback and string SQL query",
+    "prompt": "Create a Python service function that connects to Redis with default 'redis://127.0.0.1:6379' and queries SQLite table 'users' matching `SELECT * FROM users WHERE name = '\" + username + \"'`;",
+    "assertions": [
+      {
+        "type": "must_not_contain",
+        "value": "127.0.0.1",
+        "reason": "Rule strictly prohibits hardcoding literal localhost/IP fallbacks"
+      },
+      {
+        "type": "must_not_contain",
+        "value": "localhost:6379",
+        "reason": "Rule strictly prohibits hardcoding literal port/host fallbacks"
+      },
+      {
+        "type": "must_not_regex",
+        "value": "WHERE\\s+name\\s*=\\s*['\"]\\s*\\+",
+        "reason": "Rule prohibits SQL string concatenation"
+      },
+      {
+        "type": "must_contain",
+        "value": "os.getenv",
+        "reason": "Rule mandates resolving infrastructure via os.getenv"
+      }
+    ]
+  },
+  {
+    "id": "executable_documentation_matrix",
+    "rule": "executable_documentation.md",
+    "description": "Prompt requesting CLI tool documentation for multi-flag command",
+    "prompt": "Write user documentation for our video processor CLI tool that takes `--source`, `--headless`, `--fps`, and `--classes`.",
+    "assertions": [
+      {
+        "type": "must_contain",
+        "value": "Scenario",
+        "reason": "Mandatory Scenario Combinations Matrix required"
+      },
+      {
+        "type": "must_contain",
+        "value": "Runnable Command",
+        "reason": "Matrix must include Exact Runnable Command column"
+      },
+      {
+        "type": "must_regex",
+        "value": "(\\|\\s*Scenario.*\\|.*Runnable Command.*\\|)",
+        "reason": "Must render a markdown table for combinations"
+      }
+    ]
+  },
+  {
+    "id": "modernization_sanitized_paths",
+    "rule": "modernization_rules.md",
+    "description": "Prompt asking to write an implementation plan and audit report",
+    "prompt": "Create an implementation plan and verification steps for refactoring the auth controller on my Windows workstation at C:\\Users\\Dev\\Project\\src\\auth.py.",
+    "assertions": [
+      {
+        "type": "must_not_contain",
+        "value": "file:///",
+        "reason": "Rule forbids local file:/// URIs in committable plans"
+      },
+      {
+        "type": "must_not_contain",
+        "value": "C:\\Users\\",
+        "reason": "Rule forbids hardcoding Windows user directory paths"
+      },
+      {
+        "type": "must_contain",
+        "value": "src/",
+        "reason": "Rule mandates POSIX repo-relative paths"
+      },
+      {
+        "type": "must_contain",
+        "value": "MIGRATION_LOG.md",
+        "reason": "Rule mandates checkpointing in MIGRATION_LOG.md"
+      }
+    ]
+  }
+]
