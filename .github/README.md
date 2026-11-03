@@ -11,7 +11,7 @@ Global engineering standards, security baselines, and architectural constraints 
 | [**`security_and_standards.md`**](../security_and_standards.md) | Universal | OWASP Top 10, 12-factor secrets management, zero hardcoded infrastructure details, data privacy/GDPR, safe error handling, and cross-platform portability. |
 | [**`modernization_rules.md`**](../modernization_rules.md) | Modernization | Milestone-by-milestone workflows, `MIGRATION_LOG.md` persistence for token-interruption resilience, and preservation of reference comments. |
 | [**`executable_documentation.md`**](../executable_documentation.md) | Documentation | Ensures runbooks and documentation include copy-pasteable, verified CLI commands rather than abstract placeholders. |
-| [**`python_decrufting.md`**](../python_decrufting.md) | Python 3.10–3.12+ | Prohibits reintroduction of Python 2/3 shims (`six`, `future`, `from __future__ import division`) in favor of modern standard library idioms. |
+| [**`python_decrufting.md`**](../python_decrufting.md) | Python 3.10–3.15+ | Prohibits all `__future__` imports and legacy Python 2/3 shims in favor of native standard library idioms. |
 
 ---
 
