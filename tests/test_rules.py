@@ -13,17 +13,33 @@ import unittest
 RULES_DIR = Path(__file__).resolve().parent.parent
 
 # Core rules that must always be present in the repository
-REQUIRED_RULES = [
-    "executable_documentation.md",
-    "modernization_rules.md",
-    "python_decrufting.md",
-    "security_and_standards.md",
-]
+REQUIRED_RULES = {
+    "executable_documentation.md": "model_decision",
+    "modernization_rules.md": "model_decision",
+    "python_decrufting.md": "glob",
+    "security_and_standards.md": "always_on",
+}
 
 # Hard ceilings for token economy and prompt efficiency
 MAX_LINES_PER_RULE = 120
-MAX_ESTIMATED_TOKENS_PER_RULE = 2000
-MAX_TOTAL_ESTIMATED_TOKENS = 4000
+MAX_ESTIMATED_TOKENS_PER_RULE = 1600
+MAX_ALWAYS_ON_ESTIMATED_TOKENS = 1600
+MAX_TOTAL_ESTIMATED_TOKENS = 3500
+
+FRONTMATTER_RE = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
+
+
+def parse_rule_frontmatter(content: str) -> dict[str, str]:
+    """Extract key-value pairs from YAML frontmatter."""
+    match = FRONTMATTER_RE.match(content)
+    if not match:
+        return {}
+    fields: dict[str, str] = {}
+    for line in match.group(1).splitlines():
+        if ":" in line:
+            key, val = line.split(":", 1)
+            fields[key.strip()] = val.strip().strip('"').strip("'")
+    return fields
 
 
 class TestAntigravityRules(unittest.TestCase):
@@ -41,11 +57,7 @@ class TestAntigravityRules(unittest.TestCase):
         """Verify that all foundational rule files exist in the rules directory."""
         found_names = set(self.rule_map.keys())
         for req in REQUIRED_RULES:
-            self.assertIn(
-                req,
-                found_names,
-                f"Missing required global rule file: {req}",
-            )
+            self.assertIn(req, found_names, f"Missing required global rule file: {req}")
 
     def test_no_unauthorized_markdown_in_rules_root(self):
         """Ensure no loose markdown files in rules root that Antigravity would inject into prompts."""
@@ -55,36 +67,23 @@ class TestAntigravityRules(unittest.TestCase):
         }
         self.assertEqual(
             root_md_files,
-            set(REQUIRED_RULES),
-            f"Unauthorized markdown files found in rules root: {root_md_files - set(REQUIRED_RULES)}",
+            set(REQUIRED_RULES.keys()),
+            f"Unauthorized markdown files found in rules root: {root_md_files - set(REQUIRED_RULES.keys())}",
         )
 
     def test_yaml_frontmatter(self):
-        """Verify every rule has valid frontmatter with description and recognized trigger."""
-        frontmatter_pattern = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
-        valid_trigger_prefixes = ("always_on", "model_decision", "glob", "manual")
+        """Verify every rule has valid frontmatter, exact trigger mode, and required globs."""
+        valid_triggers = {"always_on", "model_decision", "glob", "manual"}
         for name, content in self.rule_map.items():
-            match = frontmatter_pattern.match(content)
-            self.assertIsNotNone(
-                match,
-                f"{name}: Missing or malformed YAML frontmatter (must start with '---')",
-            )
-            body = match.group(1)
-            self.assertIn(
-                "description:",
-                body,
-                f"{name}: Frontmatter missing 'description' field",
-            )
-            trigger_match = re.search(r"^trigger:\s*([^\r\n]+)", body, re.MULTILINE)
-            self.assertIsNotNone(
-                trigger_match,
-                f"{name}: Frontmatter missing 'trigger' field",
-            )
-            trigger_val = trigger_match.group(1).strip()
-            self.assertTrue(
-                any(trigger_val.startswith(prefix) for prefix in valid_trigger_prefixes),
-                f"{name}: Invalid trigger value '{trigger_val}' (must start with one of {valid_trigger_prefixes})",
-            )
+            fields = parse_rule_frontmatter(content)
+            self.assertTrue(fields, f"{name}: Missing or malformed YAML frontmatter")
+            self.assertTrue(fields.get("description"), f"{name}: Missing non-empty 'description'")
+            trigger_val = fields.get("trigger", "")
+            self.assertIn(trigger_val, valid_triggers, f"{name}: Invalid trigger '{trigger_val}'")
+            if trigger_val == "glob":
+                self.assertTrue(fields.get("globs"), f"{name}: trigger 'glob' requires 'globs' field")
+            if name in REQUIRED_RULES:
+                self.assertEqual(trigger_val, REQUIRED_RULES[name], f"{name}: Unexpected trigger mode")
 
     def test_no_hardcoded_machine_paths(self):
         """Enforce zero hardcoded local machine paths or file:/// URIs in rules."""
@@ -97,43 +96,32 @@ class TestAntigravityRules(unittest.TestCase):
         for name, content in self.rule_map.items():
             for pattern, desc in forbidden_patterns:
                 matches = pattern.findall(content)
-                self.assertEqual(
-                    len(matches),
-                    0,
-                    f"{name}: Contains forbidden {desc}: {matches}",
-                )
+                self.assertEqual(len(matches), 0, f"{name}: Contains forbidden {desc}: {matches}")
 
     def test_token_and_line_budgets(self):
-        """Enforce quantitative modularity and token ceilings on rule files."""
-        total_tokens = 0
+        """Enforce line ceilings plus Always-On (<=1600) and All-Active (<=3500) token gates."""
+        always_on_tokens = 0
+        all_active_tokens = 0
         for name, content in self.rule_map.items():
-            lines = content.splitlines()
-            line_count = len(lines)
+            line_count = len(content.splitlines())
             est_tokens = int(len(content) / 3.7)
-            total_tokens += est_tokens
+            fields = parse_rule_frontmatter(content)
+            desc_tokens = int(len(fields.get("description", "")) / 3.7) + 8
+            all_active_tokens += est_tokens
+            always_on_tokens += est_tokens if fields.get("trigger") == "always_on" else desc_tokens
 
-            self.assertLessEqual(
-                line_count,
-                MAX_LINES_PER_RULE,
-                f"{name}: Exceeds line ceiling ({line_count} > {MAX_LINES_PER_RULE})",
-            )
-            self.assertLessEqual(
-                est_tokens,
-                MAX_ESTIMATED_TOKENS_PER_RULE,
-                f"{name}: Exceeds estimated token ceiling ({est_tokens} > {MAX_ESTIMATED_TOKENS_PER_RULE})",
-            )
+            self.assertLessEqual(line_count, MAX_LINES_PER_RULE, f"{name}: Exceeds line ceiling")
+            self.assertLessEqual(est_tokens, MAX_ESTIMATED_TOKENS_PER_RULE, f"{name}: Exceeds token ceiling")
 
-        self.assertLessEqual(
-            total_tokens,
-            MAX_TOTAL_ESTIMATED_TOKENS,
-            f"Total global rules overhead exceeds budget ({total_tokens} > {MAX_TOTAL_ESTIMATED_TOKENS})",
-        )
+        self.assertLessEqual(always_on_tokens, MAX_ALWAYS_ON_ESTIMATED_TOKENS, "Always-on budget exceeded")
+        self.assertLessEqual(all_active_tokens, MAX_TOTAL_ESTIMATED_TOKENS, "All-active budget exceeded")
 
     def test_executable_documentation_contract(self):
         """Validate core contractual clauses in executable_documentation.md."""
         content = self.rule_map.get("executable_documentation.md", "")
         self.assertIn("Scenario Combinations Matrix", content)
         self.assertIn("Pre-Run Verification One-Liners", content)
+        self.assertIn("Code-Doc Sync Invariant", content)
         self.assertRegex(content, r"\|\s*Scenario\s*/\s*Objective\s*\|")
 
     def test_modernization_rules_contract(self):
@@ -143,6 +131,7 @@ class TestAntigravityRules(unittest.TestCase):
         self.assertIn("Pre-Commit Staging Audit Gate", content)
         self.assertIn("Comment & Reference Preservation", content)
         self.assertIn("POSIX Paths", content)
+        self.assertIn("Delta-Only Local `AGENTS.md`", content)
 
     def test_python_decrufting_contract(self):
         """Validate core contractual clauses in python_decrufting.md."""

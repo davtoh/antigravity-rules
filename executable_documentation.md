@@ -1,17 +1,18 @@
 ---
-description: Require runnable CLI/service recipes, pre-run diagnostic one-liners, and Scenario Combinations Matrices in project documentation.
-trigger: always_on
+description: Activate when adding/modifying CLI flags, APIs, or features, or updating README.md, SETUP_GUIDE.md, or docs/. Enforces code-doc sync, runnable CLI recipes, and Scenario Combinations Matrices.
+trigger: model_decision
 ---
 
 # Rule: Executable Documentation & Scenario Matrices
 
 ## Purpose
-Prevent abstract, difficult-to-run documentation. User-facing manuals (`README.md`, `SETUP_GUIDE.md`, `docs/`) must provide copy-pasteable execution commands, diagnostic one-liners, and parameter combination tables.
+Ensure manuals (`README.md`, `SETUP_GUIDE.md`, `docs/`) provide runnable commands, diagnostic one-liners, and parameter tables kept strictly synchronized with code changes.
 
 ## Guidelines
 
-1. **Documentation as Single Source of Truth:**
+1. **Documentation as Single Source of Truth & Code-Doc Sync:**
    - Keep runnable CLI recipes and configurations in project docs (`README.md`, `docs/`). Do not duplicate static command lists into separate custom skills where they drift.
+   - **Code-Doc Sync Invariant:** Whenever code introduces, alters, or deprecates CLI flags, environment variables, APIs, or workflows, update corresponding `README.md`, `docs/`, and Scenario Combinations Matrix in the same milestone. Never leave new functionality undocumented.
 
 2. **Pre-Run Verification One-Liners:**
    - Always provide 1–2 quick diagnostic commands before complex execution recipes:
@@ -20,7 +21,7 @@ Prevent abstract, difficult-to-run documentation. User-facing manuals (`README.m
      - Run automated test suite (`python -m unittest discover tests`).
 
 3. **Mandatory Scenario Combinations Matrix:**
-   - For commands accepting multiple flags, include a Markdown table matching user intent to exact runnable commands:
+   - For multi-flag commands, include a Markdown table matching user intent to runnable commands:
 
    | Scenario / Objective | Mode / Inputs | Key Parameters | Exact Runnable Command |
    | :--- | :--- | :--- | :--- |

@@ -105,5 +105,28 @@
         "reason": "Rule mandates checkpointing in MIGRATION_LOG.md"
       }
     ]
+  },
+  {
+    "id": "modernization_delta_only_agents_md",
+    "rule": "modernization_rules.md",
+    "description": "Prompt asking to generate a workspace AGENTS.md file",
+    "prompt": "Create a local AGENTS.md file for our FastAPI project (`src/routers/`, `src/services/`, tested with `pytest tests/ -v`). Should I also copy all our global OWASP and Python decrufting rules from ~/.gemini/config/rules/ into AGENTS.md?",
+    "assertions": [
+      {
+        "type": "must_contain",
+        "value": "pytest tests/ -v",
+        "reason": "Must include repository-specific test command delta"
+      },
+      {
+        "type": "must_contain",
+        "value": "src/routers/",
+        "reason": "Must include repository directory ownership delta"
+      },
+      {
+        "type": "must_regex",
+        "value": "(?i)(do not|never|avoid)\\s+(copy|duplicate|repeat)",
+        "reason": "Rule strictly prohibits duplicating global rules into local AGENTS.md"
+      }
+    ]
   }
 ]

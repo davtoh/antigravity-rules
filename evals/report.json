@@ -1,46 +1,64 @@
 {
-  "baseline_ref": "HEAD~1",
+  "baseline_ref": "fcd0009",
+  "candidate_source": "Working Tree",
   "metrics": {
     "executable_documentation.md": {
+      "trigger": "model_decision",
       "baseline_lines": 44,
-      "candidate_lines": 31,
-      "line_delta": -13,
+      "candidate_lines": 32,
+      "line_delta": -12,
       "baseline_tokens": 886,
-      "candidate_tokens": 466,
-      "token_delta": -420,
-      "savings_pct": 47.4
+      "candidate_always_on_tokens": 59,
+      "candidate_active_tokens": 547,
+      "always_on_delta": -827,
+      "active_token_delta": -339,
+      "always_on_savings_pct": 93.3,
+      "active_savings_pct": 38.3
     },
     "modernization_rules.md": {
+      "trigger": "model_decision",
       "baseline_lines": 67,
-      "candidate_lines": 39,
-      "line_delta": -28,
+      "candidate_lines": 44,
+      "line_delta": -23,
       "baseline_tokens": 1677,
-      "candidate_tokens": 783,
-      "token_delta": -894,
-      "savings_pct": 53.3
+      "candidate_always_on_tokens": 50,
+      "candidate_active_tokens": 977,
+      "always_on_delta": -1627,
+      "active_token_delta": -700,
+      "always_on_savings_pct": 97.0,
+      "active_savings_pct": 41.7
     },
     "python_decrufting.md": {
+      "trigger": "glob",
       "baseline_lines": 29,
-      "candidate_lines": 35,
-      "line_delta": 6,
+      "candidate_lines": 36,
+      "line_delta": 7,
       "baseline_tokens": 548,
-      "candidate_tokens": 549,
-      "token_delta": 1,
-      "savings_pct": -0.2
+      "candidate_always_on_tokens": 54,
+      "candidate_active_tokens": 564,
+      "always_on_delta": -494,
+      "active_token_delta": 16,
+      "always_on_savings_pct": 90.1,
+      "active_savings_pct": -2.9
     },
     "security_and_standards.md": {
+      "trigger": "always_on",
       "baseline_lines": 115,
       "candidate_lines": 55,
       "line_delta": -60,
       "baseline_tokens": 3101,
-      "candidate_tokens": 1396,
-      "token_delta": -1705,
-      "savings_pct": 55.0
+      "candidate_always_on_tokens": 1396,
+      "candidate_active_tokens": 1396,
+      "always_on_delta": -1705,
+      "active_token_delta": -1705,
+      "always_on_savings_pct": 55.0,
+      "active_savings_pct": 55.0
     }
   },
   "total_baseline_tokens": 6212,
-  "total_candidate_tokens": 3194,
-  "total_token_delta": -3018,
-  "total_savings_pct": 48.6,
-  "test_cases_count": 4
+  "total_always_on_tokens": 1559,
+  "total_candidate_tokens": 3484,
+  "always_on_savings_pct": 74.9,
+  "total_savings_pct": 43.9,
+  "test_cases_count": 5
 }

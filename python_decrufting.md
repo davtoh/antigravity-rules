@@ -1,6 +1,7 @@
 ---
-description: Enforce modern Python 3 standards, prohibit all __future__ imports, eliminate obsolete Python 2/3 shims, and preserve domain math.
-trigger: always_on
+description: Enforce modern Python 3 (3.10–3.15+) standards, prohibit all __future__ imports, eliminate obsolete Python 2/3 shims (six, past.builtins, object), and preserve domain math.
+trigger: glob
+globs: "**/*.py"
 ---
 
 # Rule: Python Decrufting & Modern Standards
