@@ -63,4 +63,5 @@ trigger: always_on
   - When migrating to other languages (Node/Go/Rust/C#): follow official idioms, project scaffolding, and dependency management standards.
 - **Frontend, CSS Specificity & Layout Discipline:**
   - Never use `!important` in production stylesheets. Rely on standard selector hierarchy, pseudo-classes (`:fullscreen`, `:hover`), and scoped custom properties rather than brute-forcing specificity.
-  - Enforce defensive layout containment on flex/grid labels: require `min-width: 0`, `overflow: hidden`, and `text-overflow: ellipsis` alongside native `title` hover attributes to prevent unbounded string overflow.
+  - Enforce defensive layout containment on flex/grid labels: require `min-width: 0`, `overflow: hidden`, and `text-overflow: ellipsis` alongside native `title` hover attributes to prevent unbounded string overflow, with zero root horizontal document overflow (`max-width: 100vw; overflow-x: clip;`).
+  - Spacing & collision discipline: never place adjacent control clusters or major flex containers flush against each other with zero gap. Maintain explicit, proportional gaps (>= 8px internally, 16px-24px between layout regions) and verify directional control edge detection respects scroll-snap alignments and container padding.

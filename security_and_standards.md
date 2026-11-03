@@ -66,6 +66,9 @@ Enforce industry-standard security (OWASP Top 10, 12-Factor App methodology), th
   - Never hardcode POSIX (`/`) or Windows (`\`) slashes in filesystem operations. Always use standard path libraries (`pathlib.Path`, `os.path`, or target language standard library).
 - **Portable System Dependencies:**
   - Avoid OS-exclusive modules (e.g. Unix-only `import resource`) in shared logic; use cross-platform libraries like `psutil`.
+- **Line Ending Discipline & Multi-Line Editing:**
+  - On Windows repositories or mixed-OS environments (where Git `core.autocrlf` or editor configurations may normalize checkouts to CRLF `\r\n`), inspect and respect target file line endings before applying multi-line text replacements (`edit_file`).
+  - Never guess whitespace or write disposable patching scripts in `scratch/`; match the existing line endings exactly to prevent "target content not found" errors.
 
 ---
 
@@ -103,3 +106,10 @@ To prevent "God Files" and "God Classes" that degrade human maintainability and 
   - Rely on structured CSS specificity: leverage pseudo-classes (`:fullscreen`, `:hover`, `:focus-visible`), parent-scoped selectors, or CSS custom properties (variables) rather than brute-forcing styles.
 - **Defensive Layout & Overflow Containment:**
   - Prevent text-overflow blowouts by ensuring all flex and grid children containing dynamic or user-supplied strings include `min-width: 0`, `overflow: hidden`, and `text-overflow: ellipsis`, pairing them with native `title` attributes for full hover reveal.
+  - Enforce zero horizontal page overflow (`max-width: 100vw; overflow-x: clip;`).
+- **Spacing & Separation Discipline:**
+  - Never place adjacent interactive clusters or primary header sections flush against each other with zero gap. All major flex containers must define explicit proportional gaps and margins (minimum 8px between internal buttons, 16px–24px between major layout sections).
+- **Zero Collision & Overlap Guarantee:**
+  - Interactive controls (scroll arrows, buttons, badges, modals) must never collide, overlap, or occlude sibling components. Ensure WCAG AA touch target compliance (>= 24px, recommended >= 32px-44px).
+- **Resilient Directional Control States:**
+  - Directional navigation arrows and scroll buttons must accurately reflect viewport edge proximity, taking into account container padding, border widths, and CSS scroll-snap resting alignments (`scroll-snap-align`) rather than assuming exact zero offsets (`scrollLeft <= 0`).
