@@ -24,6 +24,9 @@ trigger: always_on
 - **Safe Error Handling:** Never leak uncaught exceptions, internal filesystem paths, or stack traces to clients in production. Return clean HTTP error codes (`400`, `401`, `403`, `404`).
 - **Resource Management:** Always use context managers (`with` statements) or explicit cleanup (`try...finally`) for file handles, sockets, database sessions, and camera capture handles (`cap.release()`). Prevent unconstrained buffer growth.
 - **Thread & Pipeline Safety:** Decouple IO/inference workloads from UI rendering. Never use blocking `time.sleep()` in long-running reconnect or worker loops; use interruptible event waits (`Event.wait(timeout)`). Provide graceful hardware/service fallbacks.
+  - **Never hold locks across blocking operations:** Never execute `thread.join()`, socket calls, or sleep waits while holding a lock (`with self._lock:`). Always release the lock prior to joining threads.
+  - **Zero Default time.sleep Fallbacks:** When adding cancellation events, default `self.stop_event` to `threading.Event()` rather than `None` to prevent falling back to uninterruptible `time.sleep()`.
+  - **Upstream Factory Parity:** When parameterizing environment variables (e.g. `MQTT_BROKER`), audit all upstream pipeline factories to ensure they do not pass literal hardcoded string defaults that override environment defaults.
 
 ---
 
