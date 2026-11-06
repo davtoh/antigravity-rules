@@ -1,5 +1,5 @@
 ---
-description: Activate when modernizing legacy code, migrating frameworks, writing implementation plans, updating MIGRATION_LOG.md or AGENTS.md, or auditing staged commits.
+description: Activate when modernizing legacy code, migrating frameworks, writing implementation plans, managing changelogs, updating AGENTS.md, or auditing staged commits.
 trigger: model_decision
 ---
 
@@ -12,9 +12,13 @@ trigger: model_decision
 
 ---
 
-## 2. Persistent Task & Migration Logging
-- **Log State Regularly:** Maintain a persistent `MIGRATION_LOG.md` tracking active tasks, milestones, and architectural decisions.
-- **Token & Quota Interruption Resilience:** Write checkpoints into `MIGRATION_LOG.md` before and after major modifications so subsequent sessions resume without regressing: milestone title, objectives, files modified/created, test commands, and pending items.
+## 2. Unified Changelog & Campaign State Protocol
+- **Campaign State Separation:** In-flight refactoring campaign state lives in `<workspace>/.refactor/state.json` and `.refactor/plan.md`. Permanent architectural topology lives in `<workspace>/AGENTS.md` (< 40 lines, updated in-place).
+- **Zero-Token Milestone Logging:** Never call `read_file` or `edit_file` on changelog files, and never hardcode legacy log paths. Record milestone completions exclusively via the unified CLI:
+  ```bash
+  python skills/system-diagnostics/scripts/diagnose.py changelog add --title "<Title>" --type <type> --summary "<Summary>" --verify "<Command (Result)>"
+  ```
+- **Single-Generation Echo Protocol:** `diagnose.py changelog add` automatically rotates older entries (keeping active log <= 150 lines), archives historical overflow into `.changelogs/`, and prints a copy-pasteable `git commit` snippet. Re-use this printed snippet directly—never spend output tokens regenerating redundant commit prose in chat.
 
 ---
 
