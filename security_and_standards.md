@@ -27,6 +27,8 @@ trigger: always_on
   - **Never hold locks across blocking operations:** Never execute `thread.join()`, socket calls, or sleep waits while holding a lock (`with self._lock:`). Always release the lock prior to joining threads.
   - **Zero Default time.sleep Fallbacks:** When adding cancellation events, default `self.stop_event` to `threading.Event()` rather than `None` to prevent falling back to uninterruptible `time.sleep()`.
   - **Upstream Factory Parity:** When parameterizing environment variables (e.g. `MQTT_BROKER`), audit all upstream pipeline factories to ensure they do not pass literal hardcoded string defaults that override environment defaults.
+  - **Asynchronous Event Isolation (Target-to-View Match):** In UI event subscribers handling asynchronous job completion, always verify `currentActiveId === event.targetId` before updating DOM containers to prevent background jobs from overwriting unrelated views.
+  - **Persistent State Invariant:** When a feature specifies preserving task progress or reports across tabs and navigation, state MUST be backed by a persistent storage mechanism (database, local storage, or server-side cache), not volatile in-memory JavaScript structures (`Map`, `Object`).
 
 ---
 
