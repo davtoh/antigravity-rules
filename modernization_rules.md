@@ -19,6 +19,8 @@ trigger: model_decision
   python skills/system-diagnostics/scripts/diagnose.py changelog add --title "<Title>" --type <type> --summary "<Summary>" --verify "<Command (Result)>"
   ```
 - **Single-Generation Echo Protocol:** `diagnose.py changelog add` automatically rotates older entries (keeping active log <= 150 lines), archives historical overflow into `.changelogs/`, and prints a copy-pasteable `git commit` snippet. Re-use this printed snippet directly—never spend output tokens regenerating redundant commit prose in chat.
+- **Legacy Log Migration Guard:** If a repository contains a legacy `MIGRATION_LOG.md` or oversized changelog (> 150 lines), NEVER read or edit it with `read_file`/`edit_file`. Running `python skills/system-diagnostics/scripts/diagnose.py changelog add ...` automatically migrates legacy entries, archives historical chunks into `.changelogs/`, and creates/rotates `CHANGELOG.md` under 150 lines with zero read tokens.
+- **Smart Archive Discovery & Flexible Routing:** `diagnose.py changelog add` automatically discovers existing changelog archive directories: `archive/changelogs/`, `docs/archive/changelogs/`, `docs/changelogs/`, `changelogs/`, or `.changelogs/` (fallback). Teams can customize the archive destination at any time by passing `--archive-dir <path>` or moving the folder to `archive/changelogs/` or `docs/changelogs/`.
 
 ---
 

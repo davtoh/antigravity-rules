@@ -23,6 +23,7 @@ trigger: always_on
 - **Data Privacy (GDPR / Sensitive Media):** Do not persist unnecessary PII. Provide toggles for privacy masking, face/plate blurring, or metadata-only forwarding in vision pipelines.
 - **Safe Error Handling:** Never leak uncaught exceptions, internal filesystem paths, or stack traces to clients in production. Return clean HTTP error codes (`400`, `401`, `403`, `404`).
 - **Resource Management:** Always use context managers (`with` statements) or explicit cleanup (`try...finally`) for file handles, sockets, database sessions, and camera capture handles (`cap.release()`). Prevent unconstrained buffer growth.
+- **Test State & Config Isolation:** Unit and integration tests must never read from or mutate live workspace config files, databases, or user data directories through default constructor paths. Always inject `tempfile.TemporaryDirectory()` (or equivalent isolated test paths) for file-backed stores and clean up via `addCleanup()`/`tearDown()`.
 - **Thread & Pipeline Safety:** Decouple IO/inference workloads from UI rendering. Never use blocking `time.sleep()` in long-running reconnect or worker loops; use interruptible event waits (`Event.wait(timeout)`). Provide graceful hardware/service fallbacks.
   - **Never hold locks across blocking operations:** Never execute `thread.join()`, socket calls, or sleep waits while holding a lock (`with self._lock:`). Always release the lock prior to joining threads.
   - **Zero Default time.sleep Fallbacks:** When adding cancellation events, default `self.stop_event` to `threading.Event()` rather than `None` to prevent falling back to uninterruptible `time.sleep()`.
@@ -35,6 +36,7 @@ trigger: always_on
 ## 4. Cross-Platform & File Discipline
 - **OS-Agnostic Filesystem:** Code must run seamlessly across Windows, Linux, and macOS. Never hardcode `/` or `\` slashes; use `pathlib.Path` or `os.path`. Use cross-platform libraries (e.g. `psutil`).
 - **Line Ending & Patching Discipline:** Inspect and respect target file line endings (LF vs CRLF) before applying multi-line text replacements (`edit_file`) to avoid patching failures.
+- **Zero-CRCRLF Binary Write Rule:** When modifying text files in Python scripts on Windows, NEVER use `Path.write_text()` or `open(..., 'w')` on strings that already contain `\r\n` (which causes Windows text-mode `\r\r\n` double-newline token bloat). Always write via `Path.write_bytes(content.encode('utf-8'))` or `open(..., 'w', newline='', encoding='utf-8')` to preserve exact line endings.
 
 ---
 
