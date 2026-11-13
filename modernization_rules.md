@@ -39,6 +39,7 @@ trigger: model_decision
     4. Code-Doc Sync: If CLI flags, options, or workflows changed, verify corresponding `README.md` or `docs/` updates are staged.
     5. Compliance with modularity budgets and executable verification commands.
 - **Validation & Commit Review:** Run automated checks before closing milestones, provide copy-pasteable manual verification steps, and offer concise commit suggestions.
+- **Milestone Scope Lock & `WARN`-Budget Pre-Flight:** Do not expand an executing milestone beyond its planned target modules without amending the child plan first. Before appending Step/Milestone features to any source file at or above the 350-line `WARN` threshold (e.g., 430–496L modules), insert a pre-flight split slice into the milestone plan first.
 
 ---
 
