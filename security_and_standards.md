@@ -35,6 +35,11 @@ trigger: always_on
 
 ## 4. Cross-Platform & File Discipline
 - **OS-Agnostic Filesystem:** Code must run seamlessly across Windows, Linux, and macOS. Never hardcode `/` or `\` slashes; use `pathlib.Path` or `os.path`. Use cross-platform libraries (e.g. `psutil`).
+- **Cross-Platform Virtualenv Execution Invariant:** In any workspace containing `.venv/`, never invoke bare `python` or `python3` for project scripts, test runners, or diagnostics. Always resolve the active `.venv` binary:
+  - macOS/Linux: `.venv/bin/python`
+  - Windows: `.venv\Scripts\python.exe`
+
+  Bare `python`/`python3` silently resolves to the system interpreter, which lacks all project dependencies — causing `ModuleNotFoundError` cascades that produce false negatives and waste diagnostic tokens. Use `run_diagnose.py` (which auto-resolves `.venv`) or confirm the venv path before any test run.
 - **Line Ending & Patching Discipline:** Inspect and respect target file line endings (LF vs CRLF) before applying multi-line text replacements (`edit_file`) to avoid patching failures.
 - **Zero-CRCRLF Binary Write Rule:** When modifying text files in Python scripts on Windows, NEVER use `Path.write_text()` or `open(..., 'w')` on strings that already contain `\r\n` (which causes Windows text-mode `\r\r\n` double-newline token bloat). Always write via `Path.write_bytes(content.encode('utf-8'))` or `open(..., 'w', newline='', encoding='utf-8')` to preserve exact line endings.
 
