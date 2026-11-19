@@ -15,6 +15,7 @@ trigger: always_on
 - **SQL & Query Injection:** Always use parameterized queries, ORM query builders, or prepared statements. Never use string formatting or concatenation for queries.
 - **XSS & Template Escaping:** Rely on framework auto-escaping. Avoid bypassing HTML sanitization (`|safe`, `dangerouslySetInnerHTML`, `v-html`).
 - **Command Injection & SSRF:** Never pass unvalidated input to shell execution (`os.system`, `subprocess(shell=True)`, `eval`). Restrict outbound network calls (webhooks, RTSP, MQTT) against private internal IP ranges and cloud metadata endpoints.
+- **Archive Extraction Parity:** When extracting `.zip` or `.tar` archives, reject path traversal (`Zip-Slip`/`Tar-Slip`) **and** symlink/hardlink entries uniformly across both formats.
 - **CSRF & Authentication:** Enforce CSRF protection on state-changing requests (`POST`, `PUT`, `DELETE`). Secure protected endpoints with established hashing (Argon2, bcrypt, PBKDF2).
 
 ---
@@ -26,6 +27,7 @@ trigger: always_on
 - **Test State & Config Isolation:** Unit and integration tests must never read from or mutate live workspace config files, databases, or user data directories through default constructor paths. Always inject `tempfile.TemporaryDirectory()` (or equivalent isolated test paths) for file-backed stores and clean up via `addCleanup()`/`tearDown()`.
 - **Thread & Pipeline Safety:** Decouple IO/inference workloads from UI rendering. Never use blocking `time.sleep()` in long-running reconnect or worker loops; use interruptible event waits (`Event.wait(timeout)`). Provide graceful hardware/service fallbacks.
   - **Never hold locks across blocking operations:** Never execute `thread.join()`, socket calls, or sleep waits while holding a lock (`with self._lock:`). Always release the lock prior to joining threads.
+  - **Single Clock Domain & `None` Debounce Sentinels:** Never mix wall-clock epoch (`time.time()`) and monotonic (`time.monotonic()`) timestamps across schedulers, caches, or API readers; initialize elapsed/debounce timestamps to `None` rather than `0.0`.
   - **Zero Default time.sleep Fallbacks:** When adding cancellation events, default `self.stop_event` to `threading.Event()` rather than `None` to prevent falling back to uninterruptible `time.sleep()`.
   - **Upstream Factory Parity:** When parameterizing environment variables (e.g. `MQTT_BROKER`), audit all upstream pipeline factories to ensure they do not pass literal hardcoded string defaults that override environment defaults.
   - **Asynchronous Event Isolation (Target-to-View Match):** In UI event subscribers handling asynchronous job completion, always verify `currentActiveId === event.targetId` before updating DOM containers to prevent background jobs from overwriting unrelated views.
